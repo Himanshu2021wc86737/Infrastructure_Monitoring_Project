@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Infrastructure Management System</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<header>
+  <div>
+    <h1>Infrastructure Management System</h1>
+    <p>Linux Server Health Monitoring & Predictive Alerting Prototype</p>
+  </div>
+  <button onclick="collectLocal()">Collect Local Metrics</button>
+</header>
+
+<main>
+  <section class="cards">
+    <div class="card"><span>Total Servers</span><b id="total">0</b></div>
+    <div class="card good"><span>Healthy</span><b id="healthy">0</b></div>
+    <div class="card warn"><span>Warning</span><b id="warning">0</b></div>
+    <div class="card bad"><span>Critical</span><b id="critical">0</b></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h2>Server Inventory & Health</h2><button onclick="loadAll()">Refresh</button></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Server</th><th>Host</th><th>Env</th><th>CPU</th><th>RAM</th><th>Disk</th><th>Score</th><th>Status</th></tr></thead>
+        <tbody id="servers"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h2>Recent Alerts</h2></div>
+    <div id="alerts" class="alerts"></div>
+  </section>
+</main>
+
+<footer>Infrastructure Management System • M.Tech Project Prototype</footer>
+<script src="/static/js/app.js"></script>
+</body>
+</html>
