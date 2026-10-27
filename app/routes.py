@@ -189,13 +189,11 @@ def api_alerts():
     db = get_db()
 
     rows = db.execute(
-        """
-        SELECT alerts.*, servers.name server_name
-        FROM alerts
-        LEFT JOIN servers ON servers.id=alerts.server_id
-        ORDER BY alerts.id DESC
-        LIMIT 30
-        """
+        """SELECT alerts.*, servers.name server_name
+   FROM alerts
+   JOIN servers ON servers.id = alerts.server_id
+   WHERE servers.environment = 'LAB'
+   ORDER BY alerts.id DESC LIMIT 30"""
     ).fetchall()
 
     return jsonify([dict(row) for row in rows])
