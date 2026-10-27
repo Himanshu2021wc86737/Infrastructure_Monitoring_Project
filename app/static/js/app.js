@@ -35,7 +35,6 @@ loadAll();
 
 async function autoUpdate() {
   try {
-    await getJSON("/api/collect", { method: "POST" });
     await loadAll();
   } catch (e) {
     console.error("Auto-update failed:", e);
