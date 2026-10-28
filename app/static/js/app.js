@@ -85,7 +85,9 @@ async function loadServers() {
     <td>
       <div class="server-name">
         <span class="server-icon">▤</span>
-        <b>${esc(x.name)}</b>
+        <button class="server-detail-btn"
+  onclick="openServerDetails(${Number(x.id)})"
+  type="button">${esc(x.name)}</button>
       </div>
     </td>
     <td>${esc(x.host)}</td>
@@ -337,6 +339,130 @@ async function drawHistoryChart(serverId) {
     console.error("Could not draw metrics history:", e);
     message.textContent =
       "Could not load history. Please check the server and try again.";
+  }
+}
+
+
+async function openServerDetails(serverId) {
+  let panel = document.getElementById("server-details-panel");
+
+  if (!panel) {
+    panel = document.createElement("section");
+    panel.id = "server-details-panel";
+    panel.className = "panel";
+    panel.style.marginBottom = "24px";
+
+    const inventory = document.getElementById("server-inventory");
+
+    if (inventory && inventory.parentNode) {
+      inventory.parentNode.insertBefore(panel, inventory.nextSibling);
+    } else {
+      document.querySelector(".main-content")?.appendChild(panel);
+    }
+  }
+
+  panel.innerHTML = `
+    <div style="padding:20px">
+      <h2>Server Details</h2>
+      <p id="server-details-message">Loading server details...</p>
+      <div id="server-details-content"></div>
+      <button type="button" class="secondary-btn"
+        onclick="document.getElementById('server-details-panel').style.display='none'">
+        Close Details
+      </button>
+    </div>
+  `;
+
+  panel.style.display = "block";
+  panel.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  try {
+    const [servers, history] = await Promise.all([
+      getJSON("/api/servers"),
+      getJSON(`/api/server/${Number(serverId)}/history`)
+    ]);
+
+    const server = servers.find(s => Number(s.id) === Number(serverId));
+
+    if (!server) {
+      document.getElementById("server-details-message").textContent =
+        "Server not found.";
+      return;
+    }
+
+    document.getElementById("server-details-message").textContent =
+      "Current status and latest saved metrics";
+
+    document.getElementById("server-details-content").innerHTML = `
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:16px 0">
+        <div class="card">
+          <span class="card-label">Server Name</span>
+          <b>${esc(server.name)}</b>
+        </div>
+        <div class="card">
+          <span class="card-label">Host / IP</span>
+          <b>${esc(server.host)}</b>
+        </div>
+        <div class="card">
+          <span class="card-label">Environment</span>
+          <b>${esc(server.environment || "N/A")}</b>
+        </div>
+        <div class="card">
+          <span class="card-label">Status</span>
+          <div>${statusBadge(server.status)}</div>
+        </div>
+        <div class="card">
+          <span class="card-label">CPU Usage</span>
+          ${progressBar(server.cpu, "CPU usage")}
+        </div>
+        <div class="card">
+          <span class="card-label">Memory Usage</span>
+          ${progressBar(server.memory, "Memory usage")}
+        </div>
+        <div class="card">
+          <span class="card-label">Disk Usage</span>
+          ${progressBar(server.disk, "Disk usage")}
+        </div>
+        <div class="card">
+          <span class="card-label">Health Score</span>
+          ${healthScore(server.health_score)}
+        </div>
+      </div>
+
+      <h3>Recent Metrics History</h3>
+      ${
+        Array.isArray(history) && history.length
+          ? `<div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>CPU %</th>
+                    <th>Memory %</th>
+                    <th>Disk %</th>
+                    <th>Load Average</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${history.slice(-10).reverse().map(h => `
+                    <tr>
+                      <td>${esc(h.timestamp)}</td>
+                      <td>${num(h.cpu).toFixed(1)}%</td>
+                      <td>${num(h.memory).toFixed(1)}%</td>
+                      <td>${num(h.disk).toFixed(1)}%</td>
+                      <td>${num(h.load1).toFixed(2)}</td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>`
+          : '<p class="empty-state">No historical readings available for this server yet.</p>'
+      }
+    `;
+  } catch (error) {
+    console.error("Could not load server details:", error);
+    document.getElementById("server-details-message").textContent =
+      "Could not load server details. Please try again.";
   }
 }
 
