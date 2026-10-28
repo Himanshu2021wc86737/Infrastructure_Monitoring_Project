@@ -1,45 +1,192 @@
+
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Infrastructure Management System</title>
+  <meta name="theme-color" content="#0b1730">
+  <title>Linux Infrastructure Monitoring</title>
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-<header>
-  <div>
-    <h1>Infrastructure Management System</h1>
-    <p>Linux Server Health Monitoring & Predictive Alerting Prototype</p>
-  </div>
-  <button onclick="collectLocal()">Collect Local Metrics</button>
-</header>
 
-<main>
-  <section class="cards">
-    <div class="card"><span>Total Servers</span><b id="total">0</b></div>
-    <div class="card good"><span>Healthy</span><b id="healthy">0</b></div>
-    <div class="card warn"><span>Warning</span><b id="warning">0</b></div>
-    <div class="card bad"><span>Critical</span><b id="critical">0</b></div>
-  </section>
+<div class="app-layout">
 
-  <section class="panel">
-    <div class="panel-head"><h2>Server Inventory & Health</h2><button onclick="loadAll()">Refresh</button></div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Server</th><th>Host</th><th>Env</th><th>CPU</th><th>RAM</th><th>Disk</th><th>Score</th><th>Status</th></tr></thead>
-        <tbody id="servers"></tbody>
-      </table>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">🐧</div>
+      <div>
+        <h2>Linux Monitor</h2>
+        <p>Infrastructure System</p>
+      </div>
     </div>
-  </section>
 
-  <section class="panel">
-    <div class="panel-head"><h2>Recent Alerts</h2></div>
-    <div id="alerts" class="alerts"></div>
-  </section>
-</main>
+    <p class="nav-label">MAIN MENU</p>
+    <nav class="navigation">
+      <a class="nav-item active" href="#dashboard">
+        <span>▦</span> Dashboard
+      </a>
+      <a class="nav-item" href="#server-inventory">
+        <span>▤</span> Servers
+      </a>
+      <a class="nav-item" href="#recent-alerts">
+        <span>♧</span> Alerts
+      </a>
+      <a class="nav-item" href="#server-inventory">
+        <span>⌁</span> Metrics
+      </a>
+    </nav>
 
-<footer>Infrastructure Management System • M.Tech Project Prototype</footer>
+    <div class="sidebar-bottom">
+      <div class="sidebar-art">🖥️</div>
+      <h3>Stay Ahead</h3>
+      <p>Monitor your infrastructure. Detect issues early.</p>
+      <span class="sidebar-version">M.Tech Project Prototype</span>
+    </div>
+  </aside>
+
+  <main class="main-content" id="dashboard">
+
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">INFRASTRUCTURE OVERVIEW</p>
+        <h1>Welcome to your Dashboard 👋</h1>
+        <p class="subtitle">Monitor your Linux infrastructure in one place.</p>
+      </div>
+
+      <div class="topbar-actions">
+        <span class="system-badge">
+          <span class="status-dot"></span> Monitoring Dashboard
+        </span>
+        <button class="primary-btn" onclick="collectLocal()">
+          ↻ Collect Local Metrics
+        </button>
+      </div>
+    </header>
+
+    <section class="hero-banner">
+      <div class="hero-content">
+        <span class="hero-tag">LINUX INFRASTRUCTURE</span>
+        <h2>Your Servers. One Dashboard.</h2>
+        <p>
+          Track server health, monitor resource usage and identify
+          infrastructure issues from a single place.
+        </p>
+        <a class="hero-link" href="#server-inventory">
+          Explore Servers <span>→</span>
+        </a>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hero-orbit"></div>
+        <div class="hero-server">▤</div>
+        <div class="hero-penguin">🐧</div>
+      </div>
+    </section>
+
+    <section class="section-heading">
+      <div>
+        <h2>Infrastructure Summary</h2>
+        <p>Current server health at a glance</p>
+      </div>
+      <button class="secondary-btn" onclick="loadAll()">↻ Refresh</button>
+    </section>
+
+    <section class="cards">
+      <div class="card total-card">
+        <div class="card-top">
+          <span class="metric-icon blue-icon">▤</span>
+          <span class="card-caption">INVENTORY</span>
+        </div>
+        <span class="card-label">Total Servers</span>
+        <b id="total">0</b>
+        <p class="card-foot">Servers being monitored</p>
+      </div>
+
+      <div class="card good">
+        <div class="card-top">
+          <span class="metric-icon green-icon">✓</span>
+          <span class="health-label">HEALTHY</span>
+        </div>
+        <span class="card-label">Healthy Servers</span>
+        <b id="healthy">0</b>
+        <p class="card-foot">Operating normally</p>
+      </div>
+
+      <div class="card warn">
+        <div class="card-top">
+          <span class="metric-icon amber-icon">!</span>
+          <span class="health-label">WARNING</span>
+        </div>
+        <span class="card-label">Warning Servers</span>
+        <b id="warning">0</b>
+        <p class="card-foot">Needs attention</p>
+      </div>
+
+      <div class="card bad">
+        <div class="card-top">
+          <span class="metric-icon red-icon">⚠</span>
+          <span class="health-label">CRITICAL</span>
+        </div>
+        <span class="card-label">Critical Servers</span>
+        <b id="critical">0</b>
+        <p class="card-foot">Requires investigation</p>
+      </div>
+    </section>
+
+    <section class="panel" id="server-inventory">
+      <div class="panel-head">
+        <div>
+          <h2><span class="heading-icon">▤</span> Server Inventory &amp; Health</h2>
+          <p>Review resource utilization and server status.</p>
+        </div>
+        <button class="secondary-btn" onclick="loadAll()">View Latest ↻</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Server Name</th>
+              <th>Host / IP</th>
+              <th>Environment</th>
+              <th>CPU</th>
+              <th>Memory</th>
+              <th>Disk</th>
+              <th>Health Score</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="servers">
+            <tr><td colspan="8" class="loading-cell">Loading server information...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel-foot">
+        <span class="status-dot"></span>
+        Server information is provided by the monitoring API.
+      </div>
+    </section>
+
+    <section class="panel alerts-panel" id="recent-alerts">
+      <div class="panel-head">
+        <div>
+          <h2><span class="heading-icon">♧</span> Recent Alerts</h2>
+          <p>Recent infrastructure events and health warnings.</p>
+        </div>
+      </div>
+      <div id="alerts" class="alerts">
+        <p class="empty-state">Loading recent alerts...</p>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <span>🐧 Linux Infrastructure Monitoring System</span>
+      <span>M.Tech Project Prototype</span>
+    </footer>
+
+  </main>
+</div>
+
 <script src="/static/js/app.js"></script>
 </body>
 </html>

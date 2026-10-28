@@ -3,7 +3,8 @@ import random
 import time
 import requests
 
-URL = "http://127.0.0.1:5000/api/ingest"
+URL = "https://infrastructure-monitoring-project.onrender.com/api/ingest"
+API_KEY = "2acdaa18d2912a402aa9e37078f350ea"
 
 while True:
     for i in range(1, 11):
@@ -23,7 +24,12 @@ while True:
         }
 
         try:
-            response = requests.post(URL, json=data, timeout=3)
+            response = requests.post(
+    URL,
+    json=data,
+    headers={"X-API-Key": API_KEY},
+    timeout=10
+)
             print(data["name"], response.status_code, response.json())
         except Exception as e:
             print(data["name"], "ERROR:", e)
